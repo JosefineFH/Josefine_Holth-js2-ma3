@@ -1,0 +1,46 @@
+.login_left_side {
+    height: 40vh;
+}
+
+.col-sm-6 {
+    display: flex;
+    align-items: center;
+    margin-top: 2em;
+
+    form {
+        width: 100%;
+    }
+}
+
+.login_left_side {
+    background-image: url("/assets/image/1.png");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.btn{
+    background-color: $primary;
+    color: white;
+}
+.message__container.warning{
+    height: unset;
+}
+.warning{
+    background-color: $warning;
+    border: #ca6923 2px solid;
+    
+}
+.message__container{
+    height: 20px;
+}
+
+
+@media (min-width: 768px) {
+    .login_row {
+        height: 50vw;
+    }
+
+    .col-sm-5.login_left_side {
+        height: unset;
+    }
+}
