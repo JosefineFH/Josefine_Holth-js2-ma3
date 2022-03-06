@@ -18,41 +18,13 @@ if (!token && !user) {
 
 const message = document.querySelector(".error__message__container")
 
-const queryString = document.location.search;
-const params = new URLSearchParams(queryString);
-const id = params.get("id");
-
 const form = document.querySelector("form");
 const titleInput = document.querySelector("#titleInput")
 const writhenByInput = document.querySelector("#writhenByInput");
 const bodyInput = document.querySelector("#bodyInput");
 const ratingInput = document.querySelector("#ratingInput");
-const idInput = document.querySelector("#id");
-const loading = document.querySelector(".loading");
 
-(async function () {
-    const reviewUrl = baseUrl + `reviews/${id}?populate=*`;
-
-    try {
-        const response = await fetch(reviewUrl);
-        const details = await response.json();
-        const review = details.data;
-
-        const writhenBy = review.attributes.written_by.data.attributes.username
-
-        titleInput.value = review.attributes.title
-        writhenByInput.value = writhenBy
-        bodyInput.value = review.attributes.body
-        ratingInput.value = review.attributes.rating
-        idInput.value = review.id;
-
-    } catch (error) {
-        displayMessage("error", "There is missing something", message)
-    } finally {
-        loading.style.display = "none"
-    }
-
-})();
+writhenByInput.value = user
 
 form.addEventListener("submit", submitChanges);
 
@@ -64,28 +36,28 @@ function submitChanges(event) {
     const writhenBy = writhenByInput.value.trim()
     const body = bodyInput.value.trim()
     const rating = ratingInput.value.trim()
-    const idValue = idInput.value
 
-    if (title.length === 0 || writhenBy.length === 0 || body.length === 0 || rating.length === 0) {
+    if (title.length === 5 || writhenBy.length === 0 || body.length === 20 || rating.length === 0) {
         document.querySelector(".error__message__container").innerHTML = "";
         return displayMessage("warning", "Please supply proper values", ".error__message__container");
     }
-    updateReview(title, body, rating, idValue);
-}
 
-async function updateReview(title, body, rating, id) {
-    const updateUrl = baseUrl + "reviews/" + id;
+    creatReview(title, writhenBy, body, rating);
+}
+async function creatReview(title, writhenBy, body, rating) {
+    const updateUrl = baseUrl + "reviews";
 
     const data = JSON.stringify({
         "data": {
             "title": title,
             "rating": rating,
             "body": body,
+            "written_by": writhenBy
         }
     });
 
     const options = {
-        method: "PUT",
+        method: "POST",
         body: data,
         headers: {
             "Content-Type": "application/json",
@@ -100,6 +72,7 @@ async function updateReview(title, body, rating, id) {
             displayMessage("error", json.error.message, ".error__message__container");
         }
 
+        displayMessage("something", "Your post has been created", ".error__message__container")
         window.location.href = "/dashboard.html"
 
     } catch (error) {

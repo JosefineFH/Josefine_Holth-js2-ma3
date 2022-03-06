@@ -12,40 +12,43 @@ import {
 
 createMenu();
 
-if (getUser() === null || getToken() === null) {
-    location.href = "/login.html";
-} else {
+const token = getToken();
+const user = getUser();
 
-    const reviewUrl = baseUrl + "reviews?populate=*";
-    const reviewsContainer = document.querySelector(".reviews__container")
+if (!token && !user) {
+    document.location.href = "/login.html";
+}
 
-    try {
-        const response = await fetch(reviewUrl);
-        const json = await response.json();
-        console.log(json)
-        
-        if(json.data.length === 0){
-            console.log("There is nothing her")
-            reviewsContainer.innerHTML = `<div class="message">
-            <p>You don't have any reviews yet</p>
-            </div>`
-        }
+const reviewUrl = baseUrl + "reviews?populate=*";
+const reviewsContainer = document.querySelector(".reviews__container")
 
-        const reviews = json.data;
-        reviews.forEach(review => {
-            const writtenBy = review.attributes.written_by.data
-            
+try {
+    const response = await fetch(reviewUrl);
+    const json = await response.json();
+    const reviewData = json.data
+
+    reviewData.forEach(review => {
+        const writtenBy = review.attributes.written_by.data
+        if (user === writtenBy.attributes.username) {
             reviewsContainer.innerHTML += `
+                     <div>
+                        <h3>${review.attributes.title}</h3>
+                        <p>${writtenBy.attributes.username}</p>
+                        <a href="/edit.html?id=${review.id}">Edit this post</a>
+                     </div>
+                     `
+        } else {
+            reviewsContainer.innerHTML = `
             <div>
-                <h3>${review.attributes.title}</h3>
-                <p>${writtenBy.attributes.username}</p>
-                <a href="/edit.html?id=${review.id}" > Edit </a>
-
+               <h3>There is no reviews written by you just yeat</h3>
+               <div class="mb-5">
+               <a href="/create.html" type="button" class="btn btn-light">Create review article her</a>
+             </div>
             </div>
             `
-        });
-    } catch (error) {
+        }
+    });
 
-    }
-
+} catch (error) {
+    displayMessage("warning", "Something whent wrong whene loading", ".message__container")
 }

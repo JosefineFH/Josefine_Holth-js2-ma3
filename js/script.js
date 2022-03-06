@@ -1,26 +1,29 @@
 import createMenu from "./components/createMenu.js";
-import { displayMessage } from "./components/displayMessage.js";
-import {baseUrl} from "./settings/api.js";
+import {
+    displayMessage
+} from "./components/displayMessage.js";
+import {
+    baseUrl
+} from "./settings/api.js";
 
 createMenu();
 
 const reviewUrl = baseUrl + "reviews?populate=*";
+const loading = document.querySelector(".loading");
 
-(async function() {
+(async function () {
     const reviewsContainer = document.querySelector(".reviews__container")
 
     try {
         const response = await fetch(reviewUrl);
         const json = await response.json();
-        console.log(json)
         const reviews = json.data;
-       
-        if(reviews.length === 0){
+
+        if (reviews.length === 0) {
             reviewsContainer.innerHTML = `<div class="message">
             <p>You don't have any reviews yet</p>
             </div>`
         }
-        console.log(reviews)
         reviews.forEach(review => {
             reviewsContainer.innerHTML += `
             <div>
@@ -30,10 +33,11 @@ const reviewUrl = baseUrl + "reviews?populate=*";
             </div>
             `
         });
-        
+
     } catch (error) {
-        console.log(error)
-        displayMessage("error", "There is missing something", ".error__message__container")
+        displayMessage("error", `Reviews are missing. But you can login and add one`, ".error__message__container")
+    } finally {
+        loading.style.display = "none"
     }
 
 })()

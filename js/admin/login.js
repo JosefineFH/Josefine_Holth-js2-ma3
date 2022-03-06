@@ -6,7 +6,6 @@ import {
 } from "../settings/api.js";
 import createMenu from "../components/createMenu.js";
 import {
-    getToken,
     saveToken,
     saveUser
 } from "../utils/storage.js";
@@ -28,12 +27,10 @@ function submitLogin(event) {
     message.innerHTML = "";
 
     if (usernameValue.length <= 3) {
-        console.log("Something went wrong")
         message.innerHTML += `<p>There is something wrong with your username</p>`;
         message.classList.add("warning")
     }
     if (passwordValue.length <= 4) {
-        console.log("Something went wrong")
         message.innerHTML += `<p>There is something wrong with your password</p>`;
         message.classList.add("warning")
     }
@@ -72,10 +69,10 @@ async function userLogin(username, password) {
             location.href = "/dashboard.html";
         }
         if (json.error) {
-            console.log(json.error.message)
             displayMessage("warning", "your username and/or password is wrong", ".message__container")
         }
     } catch (error) {
-        console.log(error)
+        message.innerHTML = "";
+        displayMessage("warning", "There is something wrong with the login. Plies comeback later and try again.", ".message__container")
     }
 }
